@@ -16,5 +16,5 @@ PRE-REQUISISTES:
 ## HOW TO RUN
 
  step 1: Clone the repositore with gitClone or download the folder from this page
- step 2: Compile the program with a c++ compiler (Ubuntu: g++ mazeSolver.cpp -o test -std=c++11 ``pkg-config --cflags --libs opencv``)
+ step 2: Compile the program with a c++ compiler (Ubuntu: g++ mazeSolver.cpp -o test -std=c++11 `pkg-config --cflags --libs opencv`)
  
