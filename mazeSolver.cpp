@@ -44,7 +44,7 @@ void find_components() {
 
 int main(int argc, char*argv[]){
   if(argc != 3) {
-    fprintf(stderr, "Wrong number of parameters: ./test <file> <size of path: 1 or 2>\n");
+    fprintf(stderr, "Wrong number of parameters: ./mazeSolver <file> <size of path: 1 or 2>\n");
     exit(-1);
   }
 
