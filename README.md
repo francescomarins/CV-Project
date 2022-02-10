@@ -13,3 +13,4 @@ PRE-REQUISISTES:
    - The maze can be rotates as preference, the program is orientation-indipendent
 
 
+## HOW TO RUN
