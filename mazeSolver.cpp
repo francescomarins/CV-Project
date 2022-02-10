@@ -1,6 +1,3 @@
-
-// serial code
-
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,9 +10,7 @@
 using namespace cv;
 using namespace std;
 Mat src, label_dst, erosion_dst, dilation_dst;
-int maxit = 1;
 int rows, cols;
-
 
 // direction vectors
 const int dx[] = {+1, 0, -1, 0};
@@ -65,10 +60,9 @@ int main(int argc, char*argv[]){
   //CommandLineParser parser( argc, argv, "{@input | test.png | input image}" );
   src = imread(argv[1], IMREAD_REDUCED_GRAYSCALE_2);
   threshold(src, src, 127,1,THRESH_BINARY);
-
   //show original image
   imshow( "Source", src*255);
-  waitKey(0);
+  waitKey(2000);
 
   rows = src.rows;
   cols = src.cols;
@@ -80,90 +74,30 @@ int main(int argc, char*argv[]){
     }
   }
   imshow("Complement", src*255);
-  waitKey(0);
+  waitKey(2000);
 
+  //Evaluation of the element size based on the maze to be solved
+  //Three sides must be checked to be sure to find at least one way out
+  Scalar sum_var = sum(src.row(0));
+  element_size = src.cols - sum_var.val[0];
+
+  if(!element_size) {
+    sum_var = sum(src.col(0));
+    element_size = src.rows - sum_var.val[0];
+  }
+
+  if(!element_size) {
+    sum_var = sum(src.row(src.rows-1));
+    element_size = src.cols - sum_var.val[0];
+  }
 
   // labelization
   label_dst = Mat::zeros(rows, cols, CV_8UC1);
-  printf("Before components\n");
   find_components();
-  cout << "LABEL = " << endl << " "  << label_dst << endl << endl;
-  imshow( "LABEL", label_dst*50);
-  waitKey(0);
+  imshow("LABEL", label_dst*50);
+  waitKey(2000);
 
-  //fixing the dimesions of the matrix equal to the greater dimention between rows and cols
-  maxit = (cols > rows) ? cols : rows;
-
-  //making a matrix with four rows: one for each border of the picture
-  //reporting the value of the pixels of each border
-  int LABELS[quattro][maxit];
-
-  //initialization of the matrix
-  for(i = 0; i < quattro; i++){
-    for(j = 0; j < maxit; j++){
-      LABELS[i][j] = 0;
-    }
-  }
-
-  // check if a track exists
-  for(j = 0; j < cols; j++){
-    LABELS[0][j] = src.at<unsigned char>(0,j);
-    LABELS[1][j] = src.at<unsigned char>(rows-1,j);
-  }
-  for(j = 1; j < rows-1; j++){
-    LABELS[2][j] = src.at<unsigned char>(j,0);
-    LABELS[3][j] = src.at<unsigned char>(j,cols-1);
-  }
-
-  /*
-  Mat B = Mat::zeros(4, maxit, CV_8UC1);
-  label_dst.row(0).copyTo(B.row(0));
-  label_dst.row(rows-1).copyTo(B.row(1));
-  label_dst.col(0).copyTo(B.row(2));
-  label_dst.col(cols-1).copyTo(B.row(3));
-  cout << "B = " << endl << " "  << B << endl << endl;
-  */
-  printf("\n");
-  for(i = 0; i < quattro; i++){
-    printf("Riga bordo: ");
-    for(j = 0; j < maxit; j++){
-      printf("%d ", LABELS[i][j]);
-    }
-    printf("\n");
-  }
-
-  int correctLabel[maxit];
-  for(i = 0; i < maxit; i++){
-    correctLabel[i] = 0;
-  }
-
-  for(i = 0; i < quattro; i++){
-    for(j = 0; j < maxit; j++){
-      if(LABELS[i][j] != 0) {
-        correctLabel[LABELS[i][j]+1]++; //because we started from label 1
-      }
-    }
-  }
-
-  int trackToFollow = 0;
-  for(i = 0; i < maxit; i++){
-    if(correctLabel[i] > 1) trackToFollow = i-1;
-  }
-
-
-  element_size = 0;
-  for (i = 0; i < quattro; i++) {
-    for(j = 0; j<maxit; j++) {
-      if(LABELS[i][j] != trackToFollow) element_size++;
-    }
-    if(element_size)
-    break;
-  }
-  printf("element_size: %d\n", element_size);
-
-
-  printf("Track to follow: %d\n", trackToFollow);
-
+  int trackToFollow = 1;
   for(i = 0; i<rows; i++)
   for(j = 0 ; j<cols; j++){
     if(label_dst.at<unsigned char>(i,j) != trackToFollow)
@@ -173,24 +107,25 @@ int main(int argc, char*argv[]){
     }
   }
 
-  imshow( "correctTrack", src *255);
-  cout << "after change bits = " << endl << " "  << label_dst << endl << endl;
+  imshow("correctTrack", label_dst*255);
+  waitKey(2000);
 
+  printf("Track to follow: %d\n", trackToFollow);
+  std::cout << "element_size: " << element_size << '\n';
+  std::cout << "mode: " << mode << '\n';
   Mat element = getStructuringElement( MORPH_RECT, Size(element_size*mode, element_size*mode));
   dilate(label_dst, dilation_dst, element);
   imshow( "Dilation Demo", dilation_dst *255);
-  cout << "dilation_dst = " << endl << " "  << dilation_dst << endl << endl;
+  waitKey(2000);
 
   erode(dilation_dst, erosion_dst, element);
-  cout << "erosion_dst = " << endl << " "  << erosion_dst << endl << endl;
-  imshow( "Erosion Demo", dilation_dst *255);
+  imshow( "Erosion Demo", erosion_dst *255);
+  waitKey(2000);
 
   Mat solution = Mat::zeros(rows, cols, CV_8UC1);
   absdiff(dilation_dst, erosion_dst, solution);
-  cout << "solution = " << endl << " "  << solution << endl << endl;
   imshow( "Solution Demo", solution *255);
-
-  waitKey(0);
+  waitKey(2000);
   return 0;
 
 }
