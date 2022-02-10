@@ -44,7 +44,7 @@ void find_components() {
 
 int main(int argc, char*argv[]){
   if(argc != 3) {
-    fprintf(stderr, "Wrong number of parameters: .test <file> <size of path: 1 or 2>\n");
+    fprintf(stderr, "Wrong number of parameters: ./test <file> <size of path: 1 or 2>\n");
     exit(-1);
   }
 
@@ -79,16 +79,16 @@ int main(int argc, char*argv[]){
   //Evaluation of the element size based on the maze to be solved
   //Three sides must be checked to be sure to find at least one way out
   Scalar sum_var = sum(src.row(0));
-  element_size = src.cols - sum_var.val[0];
+  element_size = cols - sum_var.val[0];
 
   if(!element_size) {
     sum_var = sum(src.col(0));
-    element_size = src.rows - sum_var.val[0];
+    element_size = rows - sum_var.val[0];
   }
 
   if(!element_size) {
-    sum_var = sum(src.row(src.rows-1));
-    element_size = src.cols - sum_var.val[0];
+    sum_var = sum(src.row(rows-1));
+    element_size = cols - sum_var.val[0];
   }
 
   // labelization
@@ -115,11 +115,11 @@ int main(int argc, char*argv[]){
   std::cout << "mode: " << mode << '\n';
   Mat element = getStructuringElement( MORPH_RECT, Size(element_size*mode, element_size*mode));
   dilate(label_dst, dilation_dst, element);
-  imshow( "Dilation Demo", dilation_dst *255);
+  imshow( "Dilation Demo", dilation_dst*255);
   waitKey(2000);
 
   erode(dilation_dst, erosion_dst, element);
-  imshow( "Erosion Demo", erosion_dst *255);
+  imshow( "Erosion Demo", erosion_dst*255);
   waitKey(2000);
 
   Mat solution = Mat::zeros(rows, cols, CV_8UC1);
