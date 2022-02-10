@@ -2,7 +2,7 @@
 
 The idea is to use Mathematical Mortphology to implement a maze solver.
 
-PRE-REQUISISTES:
+PRE-REQUISITES:
 
   * Library:
     - OpenCV installed in own computer
