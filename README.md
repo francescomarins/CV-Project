@@ -5,7 +5,7 @@
 PRE-REQUISITES:
  - Java installed in own machine
 
-## HOW TO RUN
+### HOW TO RUN
 
  - step 1: compile and run the code usign Java speicifing as parameter the source image and the number of dilation loops (example: `Java Dilate board.png 1`)
 
