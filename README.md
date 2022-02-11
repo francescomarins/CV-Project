@@ -2,8 +2,12 @@
 
 ## First (easy) - Dilation algorithm using Java
 
+PRE-REQUISITES:
+ - Java installed in own machine
 
+## HOW TO RUN
 
+ - step 1: compile and run the code usign Java speicifing as parameter the source image and the number of dilation loops (example: `Java Dilate board.png 1`)
 
 
 
@@ -14,7 +18,7 @@ The idea is to use Mathematical Morphology to implement a maze solver.
 PRE-REQUISITES:
 
   * Library:
-    - OpenCV installed in your own computer
+    - OpenCV installed in own computer
 
   * Image:
    - The maze must be composed by ONLY 2 walls
