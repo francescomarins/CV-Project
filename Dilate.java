@@ -1,5 +1,6 @@
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.awt.*;
 import javax.imageio.*;
 
 public class Dilate {
@@ -24,67 +25,76 @@ public class Dilate {
 
     int width = img.getWidth();
     int height = img.getHeight();
-    System.out.println("Dimensions: " + width + "x" + height);
     int[][] src = new int[width][height];
-    int[] pixel = new int[4];
-    int colour;
     int[][] dst = new int[width][height];
-    for (int i = 0; i < width; i++) {
-      for (int j = 0; j < height; j++) {
-        // The BufferedImage is transformed into a binary matrix
+    int[] pixel = new int[4];
+    int lastrow = height-1;
+    int lastcol = width-1;
+    int i, j, colour;
 
+    BufferedImage result = new BufferedImage(width, height,
+        BufferedImage.TYPE_BYTE_GRAY);
+
+    for (i = 0; i < width; i++) {
+      for (j = 0; j < height; j++) {
+        // The BufferedImage is transformed into a binary matrix
         colour = img.getRGB(i, j);
         //pixel[ALPHA] = (colour & 0xff000000) >>> 24;
         pixel[RED] = (colour & 0xff0000) >>> 16;
         pixel[GREEN] = (colour & 0xff00) >>> 8;
         pixel[BLUE] = colour & 0xff;
-        src[i][j] = (int) (0.299*pixel[RED] + 0.587*pixel[GREEN] + 0.114*pixel[BLUE]);
-        /*
-        We could move the dilation here to have just one cycle
-        // Performing dilation
-        try {
-          if(src[i][j] == 255) {
-            dst[i-1][j-1] = 255;
-            dst[i-1][j] = 255;
-            dst[i-1][j+1] = 255;
-            dst[i][j-1] = 255;
-            dst[i][j] = 255;
-            dst[i][j+1] = 255;
-            dst[i+1][j-1] = 255;
-            dst[i+1][j] = 255;
-            dst[i+1][j+1] = 255;
-          }
-        } catch (IndexOutOfBoundsException ex) {
-          //There is no need to take action, we just reached a border
-          System.out.println("Border reached");
-        }
-        */
+        src[i][j] = ((int) (0.299*pixel[RED] + 0.587*pixel[GREEN] + 0.114*pixel[BLUE]) > 128) ? 255 : 0;
         System.out.print(src[i][j]+" ");
       }
       System.out.println();
     }
 
-    for (int i = 0; i < width; i++) {
-    for (int j = 0; j < height; j++) {
-      // Performing dilation
-      try {
-        if(src[i][j] == 255) {
-          dst[i-1][j-1] = 255;
-          dst[i-1][j] = 255;
-          dst[i-1][j+1] = 255;
-          dst[i][j-1] = 255;
-          dst[i][j] = 255;
-          dst[i][j+1] = 255;
-          dst[i+1][j-1] = 255;
-          dst[i+1][j] = 255;
-          dst[i+1][j+1] = 255;
-        }
-      } catch (IndexOutOfBoundsException ex) {
-        //There is no need to take action, we just reached a border
-        System.out.println("Border reached");
-      }
-  }
-}
+    for (i = 0; i < width; i++) {
+      for (j = 0; j < height; j++) {
+        dst[i][j] = 0;
+        // Performing dilation
+        try {
+          if(src[i][j] == 255) {
+            if(i != 0) {
+              if(j != 0)
+              dst[i-1][j-1] = 255;
+              dst[i-1][j] = 255;
+              if(j != lastcol)
+              dst[i-1][j+1] = 255;
+            }
+            if(j != 0)
+            dst[i][j-1] = 255;
+            dst[i][j] = 255;
+            if(j != lastcol)
+            dst[i][j+1] = 255;
 
-}
+            if(i != lastrow) {
+              if(j != 0)
+              dst[i+1][j-1] = 255;
+              dst[i+1][j] = 255;
+              if(j != lastcol)
+              dst[i+1][j+1] = 255;
+            }
+          }
+        } catch (IndexOutOfBoundsException ex) {
+          //There is no need to take action, we just reached a border
+        }
+      }
+    }
+
+    for (i = 0; i < width; i++) {
+      for (j = 0; j < height; j++) {
+        colour = dst[i][j];
+        Color rgb_colour = new Color(colour, colour, colour);
+        result.setRGB(i,j,rgb_colour.getRGB());
+      }
+    }
+    try {
+      File output = new File("Result.jpg");
+      ImageIO.write(result, "jpg", output);
+    } catch (IOException exe) {
+      System.err.println("Writing result on file failed");
+      System.exit(2);
+    }
+  }
 }
