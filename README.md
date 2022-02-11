@@ -1,5 +1,14 @@
 # CV-Project
 
+## First (easy) - Dilation algorithm using Java
+
+
+
+
+
+
+## Second (advance) - Maze Solver using C++ and OpenCV
+
 The idea is to use Mathematical Morphology to implement a maze solver.
 
 PRE-REQUISITES:
