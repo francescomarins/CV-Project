@@ -11,7 +11,7 @@ public class Dilate {
   private static final int BLUE = 3;
 
   public static void main(String args[]) {
-    if(args[0] == null)
+    if(args.length < 1)
     {
       System.err.println("Usage: java dilate <image path> [number of iterations]");
       System.exit(1);
