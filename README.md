@@ -3,11 +3,11 @@
 ## ** First (easy) - Dilation algorithm using Java
 
 PRE-REQUISITES:
- - Java installed in own machine
+ - Java installed on your own machine
 
 ### HOW TO RUN
 
- - step 1: compile and run the code usign Java speicifing as parameter the source image and the number of dilation loops (example: `Java Dilate board.png 1`)
+ - step 1: compile and run the code using Java speicifing as parameters the source image and the number of dilation loops (example: `Java Dilate board.png 1`)
 
 
 
