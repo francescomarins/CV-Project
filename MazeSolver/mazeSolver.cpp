@@ -41,7 +41,6 @@ void find_components() {
     }
 }
 
-
 int main(int argc, char*argv[]){
   if(argc != 3) {
     fprintf(stderr, "Wrong number of parameters: ./mazeSolver <file> <size of path: 1 or 2>\n");
@@ -57,12 +56,10 @@ int main(int argc, char*argv[]){
     exit(-2);
   }
 
-  //CommandLineParser parser( argc, argv, "{@input | test.png | input image}" );
   src = imread(argv[1], IMREAD_REDUCED_GRAYSCALE_2);
   threshold(src, src, 127,1,THRESH_BINARY);
   //show original image
-  imshow( "Source", src*255);
-  waitKey(2000);
+  imwrite("0-Source.png", src*255);
 
   rows = src.rows;
   cols = src.cols;
@@ -73,8 +70,7 @@ int main(int argc, char*argv[]){
       src.at<unsigned char>(i,j) = (src.at<unsigned char>(i,j) - 1) * (-1);
     }
   }
-  imshow("Complement", src*255);
-  waitKey(2000);
+  imwrite("1-Complemented.png", src*255);
 
   //Evaluation of the element size based on the maze to be solved
   //Three sides must be checked to be sure to find at least one way out
@@ -94,8 +90,7 @@ int main(int argc, char*argv[]){
   // labelization
   label_dst = Mat::zeros(rows, cols, CV_8UC1);
   find_components();
-  imshow("LABEL", label_dst*50);
-  waitKey(2000);
+  imwrite("2-Labelled.png", label_dst*50);
 
   int trackToFollow = 1;
   for(i = 0; i<rows; i++)
@@ -107,25 +102,21 @@ int main(int argc, char*argv[]){
     }
   }
 
-  imshow("correctTrack", label_dst*255);
-  waitKey(2000);
+  imwrite("3-CorrectPart.png", label_dst*255);
 
   printf("Track to follow: %d\n", trackToFollow);
   std::cout << "element_size: " << element_size << '\n';
   std::cout << "mode: " << mode << '\n';
   Mat element = getStructuringElement( MORPH_RECT, Size(element_size*mode, element_size*mode));
   dilate(label_dst, dilation_dst, element);
-  imshow( "Dilation Demo", dilation_dst*255);
-  waitKey(2000);
+  imwrite("4-Dilation.png", dilation_dst*255);
 
   erode(dilation_dst, erosion_dst, element);
-  imshow( "Erosion Demo", erosion_dst*255);
-  waitKey(2000);
+  imwrite("5-Erosion.png", erosion_dst*255);
 
   Mat solution = Mat::zeros(rows, cols, CV_8UC1);
   absdiff(dilation_dst, erosion_dst, solution);
-  imshow( "Solution Demo", solution *255);
-  waitKey(2000);
+  imwrite("6-Solution.png", solution*255);
   return 0;
 
 }
